@@ -1,6 +1,7 @@
 package com.example.demo;
 
-
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import static org.junit.Assert.*;
@@ -23,6 +24,16 @@ public class DuenoServiceTest {
 
     private DuenosService duenoService;
 
+    @Before
+    public void setUp() {
+        System.out.println("\nRunning setUp...");
+    }
+
+    @After
+    public void tearDown() {
+        System.out.println("Running tearDown...\n");
+    }
+
     @Mock
     private DuenoMapper duenoMapper;
     
@@ -38,9 +49,9 @@ public class DuenoServiceTest {
         
         when(duenoMapper.getDuenos()).thenReturn(lista);
 
-        assertTrue(duenoMapper.getDuenos().get(0).equals(usuario));
-        
-        
+        assertEquals(duenoMapper.getDuenos().get(0),usuario);
     }
+
+
     
 }

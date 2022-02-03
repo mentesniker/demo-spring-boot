@@ -1,20 +1,21 @@
 package com.example.demo.api.model;
 
-public class Perro {
+public class Adoptado {
     private int id;
     private String nombre;
-    private int pertenece;
+    private String pertenece;
     private String url;
 
-    public Perro(int id, String nombre, int pertenece, String url) {
+    public Adoptado() {
+    }
+
+    public Adoptado(int id, String nombre, String pertenece, String url) {
         this.id = id;
         this.nombre = nombre;
         this.pertenece = pertenece;
         this.url = url;
     }
 
-    public Perro() {
-    }
 
     public int getId() {
         return this.id;
@@ -32,11 +33,11 @@ public class Perro {
         this.nombre = nombre;
     }
 
-    public int getPertenece() {
+    public String getPertenece() {
         return this.pertenece;
     }
 
-    public void setPertenece(int pertenece) {
+    public void setPertenece(String pertenece) {
         this.pertenece = pertenece;
     }
 
@@ -48,4 +49,7 @@ public class Perro {
         this.url = url;
     }
 
+
 }
+
+    

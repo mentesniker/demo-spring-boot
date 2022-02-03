@@ -31,7 +31,7 @@ public class SwaggerConfig {
 
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
-                .title("Cool, REST API Documentation by Super Goose !!!")
+                .title("Demo api rest")
                 .version("@PROJECT_VERSION@")
                 .description("Servicios REST de backend publicados en formato JSON: <a href='/v2/api-docs'>https://app-url/v2/api-docs</a>")
                 .license("Apache Licence")
