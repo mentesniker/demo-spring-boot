@@ -3,11 +3,14 @@ package com.example.demo.api.rest;
 import java.util.List;
 
 import com.example.demo.api.exceptions.ControllerException;
+import com.example.demo.api.mapper.AdminMapper;
 import com.example.demo.api.model.Adoptado;
 import com.example.demo.api.model.Dueno;
 import com.example.demo.api.model.Perro;
 import com.example.demo.api.service.DuenosService;
 import com.example.demo.api.service.PerroService;
+import com.example.demo.api.utils.HttpEstado;
+import com.example.demo.api.utils.JWTUtil;
 
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -16,6 +19,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -45,6 +49,7 @@ import io.swagger.annotations.ApiOperation;
 public class PerroController {
     
     private final PerroService perroService;
+    private AdminMapper adminMapper;
 
     /**
      * Constructor que realiza el setting de los servicios que serán
@@ -52,14 +57,16 @@ public class PerroController {
      *
      * @param duenoService Servicios de DuenosService
      */
-    public PerroController(PerroService perroService){
+    public PerroController(PerroService perroService, AdminMapper adminMapper){
         this.perroService = perroService;
+        this.adminMapper = adminMapper;
     }
 
     @GetMapping(
         path = "/get-all-adoptados",
         produces = "application/json; charset=utf-8")
-    public List<Adoptado> getAllAdoptados() throws ControllerException{
+    public List<Adoptado> getAllAdoptados( @RequestHeader("jwt") String jwt) throws ControllerException{
+        verifica(jwt, "ADMINISTRADOR");
         return perroService.getAdoptados();
     }
 
@@ -69,14 +76,16 @@ public class PerroController {
     public List<Adoptado> getOne(@ApiParam(
         name = "id",
         value = "ID del Dueno")
-        @RequestBody Dueno dueno) throws ControllerException{
+        @RequestBody Dueno dueno, @RequestHeader("jwt") String jwt) throws ControllerException{
+            verifica(jwt, "ADMINISTRADOR");
         return perroService.getAdoptado(dueno);
     }
 
     @GetMapping(
         path = "/get-all",
         produces = "application/json; charset=utf-8")
-    public List<Perro> getAll() throws ControllerException{
+    public List<Perro> getAll( @RequestHeader("jwt") String jwt) throws ControllerException{
+        verifica(jwt, "EMPLEADO");
         return perroService.getAll();
     }
 
@@ -86,7 +95,8 @@ public class PerroController {
         consumes = { MediaType.MULTIPART_FORM_DATA_VALUE,MediaType.APPLICATION_JSON_VALUE })
     public String uploadPerro(
         @RequestPart("file") MultipartFile file,
-        @PathVariable int id) throws ControllerException{
+        @PathVariable int id, @RequestHeader("jwt") String jwt) throws ControllerException{
+            verifica(jwt, "EMPLEADO");
         return perroService.uploadPerro(file, 2);
     }
 
@@ -94,15 +104,27 @@ public class PerroController {
         path = "/insert",
         produces = "application/json; charset=utf-8")
     public String insertPerro(
-        @RequestBody Perro perro) throws ControllerException{
+        @RequestBody Perro perro, @RequestHeader("jwt") String jwt) throws ControllerException{
+            verifica(jwt, "EMPLEADO");
         return perroService.insertPerro(perro);
     }
 
     @DeleteMapping(
         path = "/delete",
         produces = "application/json; charset=utf-8")
-    public String deletePerro(@RequestBody int id) throws ControllerException{
+    public String deletePerro(@RequestBody int id,  @RequestHeader("jwt") String jwt) throws ControllerException{
+        verifica(jwt, "EMPLEADO");
         return perroService.deletePerro(id);
+    }
+
+    private void verifica(String token, String targetRol) throws ControllerException {
+        String mail = JWTUtil.getInstance().getCorreoFromJwt(token, "secreto");
+        String rolesForToken = adminMapper.getRolesDelCorreo(mail);
+        if(!targetRol.equals(rolesForToken)){
+            throw new ControllerException("Token invalido. No tienes permisos para ver ese recurso.",
+            "contacta a tu administrador", 10000, "contacta a tu administrador", HttpEstado.FORBIDDEN);
+        }
+        
     }
 
 }

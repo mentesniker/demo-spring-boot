@@ -15,6 +15,7 @@ import com.example.demo.api.mapper.DuenoMapper;
 import com.example.demo.api.model.Dueno;
 import com.example.demo.api.service.DuenosService;
 import com.example.demo.api.service.DuenosServiceImpl;
+import com.example.demo.api.service.MailSenderService;
 
 import org.mockito.junit.MockitoJUnitRunner;
 
@@ -36,6 +37,9 @@ public class DuenoServiceTest {
 
     @Mock
     private DuenoMapper duenoMapper;
+
+    @Mock
+    private MailSenderService mailSenderService;
     
     @Test
     public void getDuenos() {
@@ -43,7 +47,7 @@ public class DuenoServiceTest {
         usuario.setId(1);
         usuario.setNombre("juan");
 
-        this.duenoService = new DuenosServiceImpl(duenoMapper);
+        this.duenoService = new DuenosServiceImpl(duenoMapper, mailSenderService);
         LinkedList<Dueno> lista = new LinkedList<Dueno>();
         lista.add(usuario);
         
