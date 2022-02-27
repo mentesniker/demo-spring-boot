@@ -12,9 +12,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestBody;
 
+import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
 
 @RestController
 @RequestMapping(value = "/administrador")
@@ -27,12 +28,15 @@ public class AdministradorController {
         this.adminMapper = adminMapper;
     }
 
+    @ApiOperation(
+            value = "AdministradorController::info",
+            notes = "Recibe el administrador con el que queremos iniciar sesion.")
     @PostMapping(
         path = "/login",
         produces = "application/json; charset=utf-8")
     public Login login(@ApiParam(
         name = "administrador",
-        value = "Administrador")
+        value = "Representa a un administrador (mail, password, rol)")
         @RequestBody Administrador admin) throws ControllerException{
         return loginService.login(admin); 
     }

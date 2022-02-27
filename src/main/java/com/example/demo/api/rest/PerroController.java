@@ -7,7 +7,6 @@ import com.example.demo.api.mapper.AdminMapper;
 import com.example.demo.api.model.Adoptado;
 import com.example.demo.api.model.Dueno;
 import com.example.demo.api.model.Perro;
-import com.example.demo.api.service.DuenosService;
 import com.example.demo.api.service.PerroService;
 import com.example.demo.api.utils.HttpEstado;
 import com.example.demo.api.utils.JWTUtil;
@@ -21,13 +20,12 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiOperation;
 /**
  * Implementacion  del controlador REST asociado a los endpoints
  * de gestión del DuenoController.
@@ -94,7 +92,8 @@ public class PerroController {
         produces = "application/json; charset=utf-8",
         consumes = { MediaType.MULTIPART_FORM_DATA_VALUE,MediaType.APPLICATION_JSON_VALUE })
     public String uploadPerro(
-        @RequestPart("file") MultipartFile file,
+        @RequestParam
+        ("file") MultipartFile file,
         @PathVariable int id, @RequestHeader("jwt") String jwt) throws ControllerException{
             verifica(jwt, "EMPLEADO");
         return perroService.uploadPerro(file, 2);
@@ -110,9 +109,9 @@ public class PerroController {
     }
 
     @DeleteMapping(
-        path = "/delete",
+        path = "/delete/{id}",
         produces = "application/json; charset=utf-8")
-    public String deletePerro(@RequestBody int id,  @RequestHeader("jwt") String jwt) throws ControllerException{
+    public String deletePerro(@PathVariable int id,  @RequestHeader("jwt") String jwt) throws ControllerException{
         verifica(jwt, "EMPLEADO");
         return perroService.deletePerro(id);
     }
