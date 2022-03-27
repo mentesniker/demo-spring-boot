@@ -51,7 +51,7 @@ public class DuenoServiceTest {
         LinkedList<Dueno> lista = new LinkedList<Dueno>();
         lista.add(usuario);
         
-        when(duenoMapper.getDuenos()).thenReturn(lista);
+        when(duenoMapper.getDuenos()).thenReturn(null);
 
         assertEquals(duenoMapper.getDuenos().get(0),usuario);
     }
