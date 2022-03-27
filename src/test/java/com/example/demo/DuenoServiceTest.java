@@ -4,7 +4,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import org.mockito.Mock;
 import static org.mockito.Mockito.when;
@@ -19,7 +19,7 @@ import com.example.demo.api.service.MailSenderService;
 
 import org.mockito.junit.MockitoJUnitRunner;
 
-
+/** Clase de prueba para el servicio DuenoServiceTest **/
 @RunWith(MockitoJUnitRunner.class)
 public class DuenoServiceTest {
 
@@ -41,6 +41,10 @@ public class DuenoServiceTest {
     @Mock
     private MailSenderService mailSenderService;
     
+    /** Metodo para probar el micrservicio de 
+    * obtener a todos los duenos.
+    * 
+    **/
     @Test
     public void getDuenos() {
         Dueno usuario = new Dueno();
