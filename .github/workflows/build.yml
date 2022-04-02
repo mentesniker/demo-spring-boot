@@ -1,13 +1,9 @@
-name: Analyze
+name: Build Maven project
 on:
   push:
     branches:
       - master
-  pull_request:
-    types: [opened, synchronize, reopened]
-    
-jobs:
-  
+jobs:  
   test:
     name: Unit Test
     runs-on: ubuntu-18.04
@@ -21,8 +17,8 @@ jobs:
       - name: Maven Package
         run: mvn test
 
-  build:
-    name: Build
+  static:
+    name: send to sonnar cloud
     needs: test
     runs-on: ubuntu-latest
     steps:
@@ -50,3 +46,34 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=mentesniker_demo-spring-boot
+
+  artifact:
+    name: Create the mvn artifact
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Build Maven project
+        run: |
+          mvn -B package --file pom.xml -Dmaven.test.skip
+          mkdir staging && cp target/*.jar staging
+      - name: Set up a cache for Maven
+        uses: actions/cache@v2
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
+      - name: Persist workflow data as artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: github-actions-artifact
+          path: staging
+  publish:
+    name: Deploy to github packages
+    needs: [test,artifact]
+    runs-on: ubuntu-latest
+    steps:
+      - name: deploy package
+        run: mvn --batch-mode deploy -Dmaven.test.skip
+        env:
+          GITHUB_TOKEN: ${{ secrets.TOKEN }}
+ 
