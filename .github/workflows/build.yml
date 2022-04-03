@@ -85,5 +85,5 @@ jobs:
       - name: deploy package
         run: mvn --batch-mode deploy -Dmaven.test.skip
         env:
-          GITHUB_TOKEN: ${{ secrets.TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
  
